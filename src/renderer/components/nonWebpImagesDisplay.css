@@ -1,0 +1,28 @@
+.non-webp-images-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.non-webp-image-item {
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.image-location {
+  margin-bottom: 10px;
+}
+
+.image-source {
+  word-break: break-all; /* Prevent long URLs from breaking the layout */
+}
+
+.html-element pre {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 5px;
+  overflow-x: auto; /* Enable horizontal scrolling for long HTML */
+  white-space: pre-wrap; /* Wrap long lines */
+}

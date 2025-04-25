@@ -1,0 +1,71 @@
+.category-summary {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.category-name {
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.severity-indicator {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.severity-indicator.high {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.severity-indicator.medium {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.severity-indicator.low {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.severity-indicator.none {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.issue-counts {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.count {
+  font-size: 0.9em;
+}
+
+.count.error {
+  color: #dc2626;
+}
+.count.warning {
+  color: #d97706;
+}
+.count.notice {
+  color: #0284c7;
+}
+
+.total-issues {
+  font-size: 0.9em;
+  color: #4b5563;
+}
