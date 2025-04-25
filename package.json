@@ -1,0 +1,27 @@
+{
+  "name": "broken-links-checker",
+  "version": "1.0.0",
+  "main": "./src/main/main.js",
+  "scripts": {
+    "start": "webpack && electron .",
+    "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "axios": "^1.8.3",
+    "exceljs": "^4.4.0",
+    "puppeteer": "^20.9.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.11.0",
+    "electron": "^25.3.0",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
