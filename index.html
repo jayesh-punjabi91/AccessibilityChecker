@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Accessibility Check App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Accessibility Check App</h1>
+
+    <div class="input-area">
+        <label for="excelFile">Select Excel File:</label>
+        <input type="file" id="excelFile" accept=".xlsx, .xls">
+        <button id="processButton" disabled>Process URLs</button>
+    </div>
+
+    <div id="messageArea" class="message-area">
+        <!-- Messages will be displayed here -->
+    </div>
+
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <h2 class="dashboard-title">Dashboard</h2>
+        <div class="dashboard-tiles">
+            <div class="dashboard-tile">
+                <div class="tile-title">Images Crawled</div>
+                <div id="imagesCrawledCount" class="tile-value">0</div>
+            </div>
+            <div class="dashboard-tile">
+                <div class="tile-title">Broken Images Found</div>
+                <div id="brokenImagesCount" class="tile-value">0</div>
+            </div>
+            <div class="dashboard-tile">
+                <div class="tile-title">Time Taken (seconds)</div>
+                <div id="timeTaken" class="tile-value">0.00</div>
+            </div>
+        </div>
+        <div class="broken-images-section">
+            <h3>Broken Images Details</h3>
+            <table id="brokenImagesTable">
+                <thead>
+                    <tr>
+                        <th>Page URL</th>
+                        <th>Image URL</th>
+                        <th>Status Code</th>
+                    </tr>
+                </thead>
+                <tbody> <!-- Broken image rows will be added here --> </tbody>
+            </table>
+        </div>
+
+        <div class="export-section" style="text-align: center; margin-top: 20px;"> <button id="exportButton"
+                disabled>Export Report to Excel</button> </div>
+    </div>
+
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>
