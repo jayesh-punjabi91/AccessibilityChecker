@@ -7,6 +7,10 @@ const userAgents = [
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15",
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.2210.77",
+  // Add more user agents here
 ];
 
 function getRandomUserAgent() {
@@ -97,7 +101,7 @@ const accessibilityService = {
           console.time(`Check Links for ${url}`);
 
           // Concurrency limit
-          const concurrencyLimit = 5;
+          const concurrencyLimit = 2; // Reduced concurrency to 2
           const queue = [...links]; // Create a copy of the links array
           const running = [];
 
@@ -105,7 +109,7 @@ const accessibilityService = {
             // Fill the running queue up to the concurrency limit
             while (running.length < concurrencyLimit && queue.length > 0) {
               const link = queue.shift();
-              const promise = this.checkLink(link, crawledLinks, url); // Pass parent URL to checkLink
+              const promise = this.checkLink(link, crawledLinks, url, 5, 1000); // Pass parent URL, retries and initial delayBase to checkLink
               running.push(promise);
               promise.finally(() => {
                 running.splice(running.indexOf(promise), 1); // Remove from running when complete
@@ -165,29 +169,98 @@ const accessibilityService = {
   },
 
   // Helper function to check a single link
-  async checkLink(link, crawledLinks, parentUrl) {
+  async checkLink(
+    link,
+    crawledLinks,
+    parentUrl,
+    retries = 5,
+    delayBase = 1000
+  ) {
     try {
-      const response = await axios.head(link, { timeout: 5000 });
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second after each request
+      // Introduce a random delay within a range
+      const randomDelay = Math.random() * delayBase + delayBase; // Random delay between delayBase and 2*delayBase
+      await new Promise((resolve) => setTimeout(resolve, randomDelay));
+
+      const response = await axios.get(link, { timeout: 10000 }); // Changed to axios.get
       const statusCode = response.status;
+      const contentType = response.headers["content-type"];
+
       crawledLinks.push({
         url: link,
         status: statusCode,
         parentUrl: parentUrl,
-      }); // Store URL, status code, and parent URL
+      });
+
+      // Check for content type indicating an error page
+      if (
+        statusCode === 200 &&
+        contentType &&
+        contentType.includes("text/html") &&
+        response.data.includes("Not Found")
+      ) {
+        console.log(
+          `Link ${link} returned 200 OK but contains "Not Found" in the content. Treating as 404.`
+        );
+        return { url: link, status: 404 };
+      }
+
       if (statusCode >= 400) {
         return { url: link, status: statusCode };
       }
-      return null; // Not broken
+      return null;
     } catch (error) {
-      const statusCode = error.response
+      let statusCode = error.response
         ? error.response.status
         : "Connection failed";
+
+      // Check for DNS resolution errors
+      if (error.code === "ENOTFOUND" || error.code === "EAI_AGAIN") {
+        statusCode = "DNS Resolution Failed";
+        console.log(`DNS Resolution Failed for ${link}`);
+      }
+
+      // Domain-specific handling for Twitter
+      if (link.includes("twitter.com") && statusCode === 403) {
+        console.log(`Skipping Twitter link ${link} due to 403 error.`);
+        crawledLinks.push({
+          url: link,
+          status: "Blocked",
+          parentUrl: parentUrl,
+        });
+        return { url: link, status: "Blocked" }; // Return immediately
+      }
+
+      if (retries > 0) {
+        // Exponential backoff: wait longer with each retry
+        const delay = Math.pow(2, 5 - retries) * 1000; // 1s, 2s, 4s, 8s, 16s delays
+        console.log(
+          `Retrying ${link} in ${delay}ms (${retries} retries remaining), Status Code: ${statusCode}`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        // Increase the delay base if we encounter a "Connection Failed" error
+        let newDelayBase = delayBase;
+        if (statusCode === "Connection failed") {
+          newDelayBase = delayBase * 2; // Double the delay base
+          console.log(
+            `Increasing delay base to ${newDelayBase}ms due to Connection Failed`
+          );
+        }
+
+        return this.checkLink(
+          link,
+          crawledLinks,
+          parentUrl,
+          retries - 1,
+          newDelayBase
+        ); // Recursive call with fewer retries and potentially increased delay
+      }
+
       crawledLinks.push({
         url: link,
         status: statusCode,
         parentUrl: parentUrl,
-      }); // Store URL, status code, and parent URL
+      });
       return {
         url: link,
         status: statusCode,

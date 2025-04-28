@@ -158,9 +158,9 @@ function App() {
         </div>
       )}
 
-      <footer className="footer">
+      {/* <footer className="footer">
         &copy; {new Date().getFullYear()} Broken Links Checker
-      </footer>
+      </footer> */}
     </div>
   );
 }

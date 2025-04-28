@@ -19,7 +19,7 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, "../../public/index.html"));
 
   // Open DevTools for debugging (you can remove this in production)
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Listen for progress updates from accessibilityService
   ipcMain.on("progress-update", (event, progress) => {

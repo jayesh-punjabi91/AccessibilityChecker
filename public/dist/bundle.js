@@ -34332,9 +34332,7 @@ function App() {
         key: linkIndex
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", null, link.url), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", null, link.status), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", null, getHttpStatusDescription(link.status)));
     })))));
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("footer", {
-    className: "footer"
-  }, "\xA9 ", new Date().getFullYear(), " Broken Links Checker"));
+  })));
 }
 
 // Helper function to get HTTP status description
